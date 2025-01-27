@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -122,7 +122,7 @@ end)
 vim.opt.breakindent = true
 
 -- Save undo history
-vim.opt.undofile = true
+vim.opt.undofile = false
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.opt.ignorecase = true
@@ -162,7 +162,8 @@ vim.opt.scrolloff = 10
 vim.keymap.set('n', '<leader>w', ':w<CR>')
 vim.keymap.set('n', 'H', '^')
 vim.keymap.set('n', 'L', '$')
-
+vim.keymap.set('n', '<C-t>', ':ToggleTerm<CR>')
+vim.keymap.set('t', '<C-t>', '<C-\\><C-n>:ToggleTerm<CR>')
 vim.keymap.set('i', 'jk', '<Esc>')
 vim.keymap.set('i', 'kj', '<Esc>')
 vim.keymap.set('i', '<C-h>', '<BS>')
@@ -200,6 +201,12 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
+
+function _G.set_terminal_keymaps()
+  local opts = { buffer = 0 }
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+end
+vim.cmd 'autocmd! TermOpen term://* lua set_terminal_keymaps()'
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
@@ -975,6 +982,21 @@ require('lazy').setup({
       --  desc = 'Hop After Char in Line (Before Cursor)',
       --},
     },
+  },
+
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    opts = {
+      size = 25,
+    },
+  },
+
+  {
+    'olrtg/nvim-emmet',
+    config = function()
+      vim.keymap.set({ 'n', 'v' }, '<C-y>,', require('nvim-emmet').wrap_with_abbreviation)
+    end,
   },
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
